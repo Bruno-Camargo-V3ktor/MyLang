@@ -2,7 +2,9 @@ use std::{env::args, process::ExitCode};
 
 use crate::mylang::MyLang;
 
+mod debug;
 mod mylang;
+mod tokens;
 
 fn main() -> ExitCode {
     let args = args().into_iter().collect::<Vec<String>>();
