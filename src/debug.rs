@@ -1,7 +1,7 @@
 use std::sync::Mutex;
 
 static HAD_ERROR: Mutex<bool> = Mutex::new(false);
-struct MyDebug {}
+pub struct MyDebug {}
 
 impl MyDebug {
     fn set_had_error(value: bool) {

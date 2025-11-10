@@ -1,22 +1,24 @@
 use std::{
     fs::File,
     io::{self, BufReader, Read, Write},
-    path::Path,
+    path::Path, process::ExitCode,
 };
 
 pub struct MyLang {}
 
 impl MyLang {
-    fn run(source: &str) {
+    fn run(source: &str) -> Result<(), ExitCode> {
         print!("{source}");
         let _ = io::stdout().flush();
+
+        Ok(())
     }
 
-    pub fn run_file(path: &str) {
+    pub fn run_file(path: &str) -> Result<(), ExitCode> {
         let path = Path::new(path);
         if !path.is_file() {
             eprintln!("File not found.");
-            std::process::exit(66);
+            return Err(ExitCode::from(66));
         }
 
         if let Ok(file) = File::open(path) {
@@ -24,21 +26,22 @@ impl MyLang {
             let mut reader = BufReader::new(file);
             match reader.read_to_string(&mut content) {
                 Ok(_) => {
-                    Self::run(&content);
+                    Self::run(&content)?;
+                    return Ok(())
                 }
 
                 Err(_) => {
                     eprintln!("Error reading file.");
-                    std::process::exit(77);
+                    return Err(ExitCode::from(77));
                 }
             }
         } else {
             eprintln!("Permission error opening file.");
-            std::process::exit(66);
+            return Err(ExitCode::from(66));
         }
     }
 
-    pub fn run_prompt() {
+    pub fn run_prompt() -> Result<(), ExitCode>{
         let mut line = String::new();
         let stdin = io::stdin();
 
@@ -47,11 +50,12 @@ impl MyLang {
 
         loop {
             if let Ok(_) = stdin.read_line(&mut line) {
-                if line == "exit\n" {
+                
+                if line.trim() == "exit" {
                     break;
                 }
 
-                Self::run(&line);
+                Self::run(&line)?;
 
                 print!("my> ");
                 let _ = io::stdout().flush();
@@ -61,5 +65,7 @@ impl MyLang {
 
             line.clear();
         }
+
+        Ok(())
     }
 }
