@@ -4,6 +4,7 @@ use crate::mylang::MyLang;
 mod debug;
 mod mylang;
 mod tokens;
+mod scanner;
 
 fn main() -> Result<(), ExitCode> {
     let args = args().into_iter().collect::<Vec<String>>();
